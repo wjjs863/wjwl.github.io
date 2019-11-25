@@ -47,15 +47,15 @@
   };
 </script>
 
-  <meta name="description" content="哈喽，欢迎光临">
-<meta name="keywords" content="王杰">
+  <meta name="description" content="博客文章阅读量排行榜">
+<meta name="keywords" content="top,文章阅读量排行榜">
 <meta property="og:type" content="website">
-<meta property="og:title" content="top">
+<meta property="og:title" content="TopX">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;top&#x2F;index.html">
 <meta property="og:site_name" content="wjwl">
-<meta property="og:description" content="哈喽，欢迎光临">
+<meta property="og:description" content="博客文章阅读量排行榜">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-25T07:10:02.037Z">
+<meta property="og:updated_time" content="2019-11-25T07:30:53.839Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/top/">
@@ -72,7 +72,7 @@
   };
 </script>
 
-  <title>top | wjwl
+  <title>TopX | wjwl
   </title>
   
 
@@ -149,7 +149,7 @@
   </li>
         <li class="menu-item menu-item-top">
 
-    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>top</a>
+    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>TopX</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -208,10 +208,11 @@
     <div class="post-block" lang="zh-CN">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">top
+<h1 class="post-title" itemprop="name headline">TopX
 </h1>
 
 <div class="post-meta">
+    <div class="post-description">博客文章阅读量排行榜</div>
   
 
 </div>
@@ -222,7 +223,33 @@
       
       
       <div class="post-body">
-          
+          <div id="top"></div><script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script><script>AV.initialize("0ziQzmOBNYoaeAR664jTpozI-gzGzoHsz", "SOk81iDElNqOkY1qrRFhHpzI");</script><script type="text/javascript">
+    var time=0
+    var title=""
+    var url=""
+    var query = new AV.Query('Counter');
+    query.notEqualTo('id',0);
+    query.descending('time');
+    query.limit(1000);
+    query.find().then(function (todo) {
+        for (var i=0;i<1000;i++){
+            var result=todo[i].attributes;
+            time=result.time;
+            title=result.title;
+            url=result.url;
+            var content="<a href='"+"https://wjwl.github.io"+url+"'>"+title+"</a>"+"<br />"+"<font color='#555'>"+"阅读次数："+time+"</font>"+"<br /><br />";
+            document.getElementById("top").innerHTML+=content
+        }
+    }, function (error) {
+        console.log("error");
+    });
+</script><a id="more"></a>
+
+
+
+
+
+<style>.post-description { display: none; }</style>
       </div>
       
       
@@ -238,7 +265,6 @@
 
           </div>
           
-    <div class="comments" id="comments"></div>
 
         </div>
           
