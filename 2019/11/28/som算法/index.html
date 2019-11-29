@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/jie.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/jie.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="wjwl" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="生物学研究表明，在人脑的感觉通道上，神经元的组织原理是有序排列的。当外界的特定时空信息输入时，大脑皮层的特定区域兴奋，而且类似的外界信息在对应的区域是连续映像的。生物视网膜中有许多特定的细胞对特定的图形比较敏感，当视网膜中有若干个接收单元同时受特定模式刺激时，就使大脑皮层中的特定神经元开始兴奋，输入模式接近，与之对应的兴奋神经元也接近；在听觉通道上，神经元在结构排列上与频率的关系十分密切，对于某">
+<meta name="keywords" content="王杰">
+<meta property="og:type" content="article">
+<meta property="og:title" content="som算法">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;28&#x2F;som%E7%AE%97%E6%B3%95&#x2F;index.html">
+<meta property="og:site_name" content="wjwl">
+<meta property="og:description" content="生物学研究表明，在人脑的感觉通道上，神经元的组织原理是有序排列的。当外界的特定时空信息输入时，大脑皮层的特定区域兴奋，而且类似的外界信息在对应的区域是连续映像的。生物视网膜中有许多特定的细胞对特定的图形比较敏感，当视网膜中有若干个接收单元同时受特定模式刺激时，就使大脑皮层中的特定神经元开始兴奋，输入模式接近，与之对应的兴奋神经元也接近；在听觉通道上，神经元在结构排列上与频率的关系十分密切，对于某">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;som.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;%E6%9D%A5%E8%BD%A6%E6%95%B0%E6%8D%AE.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;%E8%87%AA%E7%BC%96%E7%A0%81%E7%89%B9%E5%BE%81%E5%8E%8B%E7%BC%A9.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;SOM%E8%81%9A%E7%B1%BB.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;SOM%E7%9B%B4%E6%8E%A5%E8%81%9A%E7%B1%BB.png">
+<meta property="og:updated_time" content="2019-11-29T13:37:04.235Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;som%E7%AE%97%E6%B3%95&#x2F;som.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/28/som%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>som算法 | wjwl</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wjwl</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">博客</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-top">
+
+    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>TopX</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/som%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E8%B0%A6%E5%8D%91.gif">
+      <meta itemprop="name" content="杰神">
+      <meta itemprop="description" content="哈喽，欢迎光临">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wjwl">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          som算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-28 14:03:55" itemprop="dateCreated datePublished" datetime="2019-11-28T14:03:55+08:00">2019-11-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/11/28/som%E7%AE%97%E6%B3%95/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/11/28/som%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 生物学研究表明，在人脑的感觉通道上，神经元的组织原理是有序排列的。当外界的特定时空信息输入时，大脑皮层的特定区域兴奋，而且类似的外界信息在对应的区域是连续映像的。生物视网膜中有许多特定的细胞对特定的图形比较敏感，当视网膜中有若干个接收单元同时受特定模式刺激时，就使大脑皮层中的特定神经元开始兴奋，输入模式接近，与之对应的兴奋神经元也接近；在听觉通道上，神经元在结构排列上与频率的关系十分密切，对于某个频率，特定的神经元具有最大的响应，位置相邻的神经元具有相近的频率特征，而远离的神经元具有的频率特征差别也较大。大脑皮层中神经元的这种响应特点不是先天安排好的，而是通过后天的学习自组织形成的 。 在生物神经系统中，存在着一种侧抑制现象，即一个神经细胞兴奋以后，会对周围其他神经细胞产生抑制作用。这种抑制作用会使神经细胞之间出现竞争，其结果是某些获胜，而另一些则失败。表现形式是获胜神经细胞兴奋，失败神经细胞抑制。自组织（竞争型）神经网络就是模拟上述生物神经系统功能的人工神经网络 。</p>
+<a id="more"></a>
+
+<h1 id="1-SOM简介"><a href="#1-SOM简介" class="headerlink" title="1.SOM简介"></a>1.SOM简介</h1><p> SOM 即自组织映射，是一种用于特征检测的无监督学习神经网络。它模拟人脑中处于不同区域的神经细胞分工不同的特点，即不同区域具有不同的响应特征，而且这一过程是自动完成的。SOM 用于生成训练样本的低维空间，可以将高维数据间复杂的非线性统计关系转化为简单的几何关系，且以低维的方式展现，因此通常在降维问题中会使用它。 </p>
+<p>SOM 与其它人工神经网络不同，因为它们使用的是竞争性学习而不是错误相关的学习，后者涉及到反向传播和梯度下降。在竞争性学习中，各个节点会相互竞争响应输入数据子集的权利。训练数据通常没有标签，映射会学习根据相似度来区分各个特征。 </p>
+<h2 id="2-SOM结构"><a href="#2-SOM结构" class="headerlink" title="2 .SOM结构"></a>2 .SOM结构</h2><p>SOM结构如下图,它由输入层和竞争层(输出层)组成。输入层神经元数为 n,竞争层由m个神经元组成的一维或者二维的平面阵列，网络是全连接的即每个输入节点都与所有的输出节点相连接。</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/som%E7%AE%97%E6%B3%95/som.png" alt=""></p>
+<h1 id="3-SOM学习过程"><a href="#3-SOM学习过程" class="headerlink" title="3 .SOM学习过程"></a>3 .SOM学习过程</h1><p>SOM是无监督学习, 不需要成对的数据. SOM的学习过程可以总结成一句话, 就是调整输出层权重W以便于让相邻的节点具有相似的权重. 具体来说分为一下的步骤:</p>
+<ol>
+<li>每个节点的权重都被随机初始化。</li>
+<li>从训练数据集中随机选择向量x并将其输入到网格。</li>
+<li>检查每个输出层节点以计算哪一个的权重最像输入向量。获胜节点通常被称为最佳匹配单元（BMU）或激活单元。</li>
+<li>现在计算BMU邻域节点, 以BMU为圆心, 处于半径R内的节点都被称为邻域。R是一个开始较大的值，通常设置为输出层的“半径”，但会随着训练逐步减小。在该半径内发现的任何节点都被视为在BMU的邻域内。</li>
+<li>调整每个邻域节点（步骤4中找到的节点）权重以使它们更像输入向量。节点越靠近BMU，其权重调整的就越大。</li>
+<li>N次迭代重复步骤2</li>
+</ol>
+<h1 id="4-代码实现"><a href="#4-代码实现" class="headerlink" title="4 .代码实现"></a>4 .代码实现</h1><h2 id="4-1-数据"><a href="#4-1-数据" class="headerlink" title="4.1 数据"></a>4.1 数据</h2><p>数据是地铁隧道监控数据的330测区一段时间的收集的数据。具体数据如下图。</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/som%E7%AE%97%E6%B3%95/%E6%9D%A5%E8%BD%A6%E6%95%B0%E6%8D%AE.png" alt=""></p>
+<p>将数据切分为2000份，其中包含来车的波形数据有148份。</p>
+<p>4.2 数据特征提取。</p>
+<p>这里数据特征提取采用自编码网络。代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">from keras.models import Model</span><br><span class="line">from keras.layers import Dense, Input</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from keras.optimizers import Adam</span><br><span class="line"></span><br><span class="line">data_in=data</span><br><span class="line">data_label=label</span><br><span class="line"># 建立模型</span><br><span class="line"># in order to plot in a 2D figure</span><br><span class="line">encoding_dim = 2  # encoding_dim，要压缩成的维度。</span><br><span class="line"></span><br><span class="line"># this is our input placeholder</span><br><span class="line">input_img = Input(shape=(1500,))</span><br><span class="line"></span><br><span class="line"># encoder layers</span><br><span class="line">encoded = Dense(512, activation=&apos;relu&apos;)(input_img)</span><br><span class="line">encoded = Dense(128, activation=&apos;relu&apos;)(encoded)</span><br><span class="line">encoded = Dense(32, activation=&apos;relu&apos;)(encoded)</span><br><span class="line">encoder_output = Dense(encoding_dim)(encoded)</span><br><span class="line"></span><br><span class="line"># decoder layers</span><br><span class="line">decoded = Dense(32, activation=&apos;relu&apos;)(encoder_output)</span><br><span class="line">decoded = Dense(128, activation=&apos;relu&apos;)(decoded)</span><br><span class="line">decoded = Dense(512, activation=&apos;relu&apos;)(decoded)</span><br><span class="line">decoded = Dense(1500, activation=&apos;tanh&apos;)(decoded)</span><br><span class="line"></span><br><span class="line"># 接下来直接用 Model 这个模块来组建模型，输入就是2000份波形，输出是解压的最后的结果。</span><br><span class="line"># construct the autoencoder model</span><br><span class="line">autoencoder = Model(input=input_img, output=decoded)</span><br><span class="line"># 当我们想要看由 1500 压缩到 2维后，这个结果是什么样的时候，也可以只单独组建压缩的板块，</span><br><span class="line"># 此时它的输入是[2000,1500]的数组，输出是压缩环节的最后结果。</span><br><span class="line"># construct the encoder model for plotting</span><br><span class="line">encoder = Model(input=input_img, output=encoder_output)</span><br><span class="line"></span><br><span class="line"># 激活模型</span><br><span class="line"># 接下来是编译自编码这个模型，优化器用的是 adam，损失函数用的是 mse。</span><br><span class="line"># compile autoencoder</span><br><span class="line">adam = Adam(lr=1e-4)</span><br><span class="line">autoencoder.compile(optimizer=&apos;adam&apos;, loss=&apos;mse&apos;)</span><br><span class="line"># 训练模型</span><br><span class="line"># training</span><br><span class="line">autoencoder.fit(data_in, data_in,</span><br><span class="line">                nb_epoch=20,</span><br><span class="line">                batch_size=256,</span><br><span class="line">                shuffle=True)</span><br><span class="line"># 可视化结果</span><br><span class="line"># 最后看到可视化的结果，自编码模型可以把这俩类波形给区分开来，</span><br><span class="line"># 我们可以用自编码这个过程来作为一个特征压缩的方法，</span><br><span class="line"># 和PCA的功能一样，效果要比它好一些，因为它是非线性的结构</span><br><span class="line"># plotting</span><br><span class="line">encoded_imgs = encoder.predict(data_in)</span><br><span class="line"># io.savemat(&apos;data2000.mat&apos;,&#123;&apos;data&apos;:encoded_imgs&#125;)</span><br><span class="line">plt.scatter(encoded_imgs[:, 0], encoded_imgs[:, 1], c=label)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>自编码提取的特征如下图：</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/som%E7%AE%97%E6%B3%95/%E8%87%AA%E7%BC%96%E7%A0%81%E7%89%B9%E5%BE%81%E5%8E%8B%E7%BC%A9.jpg" alt=""></p>
+<p>4.3 SOM聚类</p>
+<p>采用SOM模型对数据聚类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import math</span><br><span class="line"># np.random.seed(1337)</span><br><span class="line"></span><br><span class="line">class SOM(object):</span><br><span class="line">    def __init__(self, X, output, iteration, batch_size):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :param X:  形状是N*D， 输入样本有N个,每个D维</span><br><span class="line">        :param output: (n,m)一个元组，为输出层的形状是一个n*m的二维矩阵</span><br><span class="line">        :param iteration:迭代次数</span><br><span class="line">        :param batch_size:每次迭代时的样本数量</span><br><span class="line">        初始化一个权值矩阵，形状为D*(n*m)，即有n*m权值向量，每个D维</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        self.X = X</span><br><span class="line">        self.output = output</span><br><span class="line">        self.iteration = iteration</span><br><span class="line">        self.batch_size = batch_size</span><br><span class="line">        self.W = np.random.rand(X.shape[1], output[0] * output[1])</span><br><span class="line">        # print (self.W.shape)</span><br><span class="line"></span><br><span class="line">    def GetN(self, t):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :param t:时间t, 这里用迭代次数来表示时间</span><br><span class="line">        :return: 返回一个整数，表示拓扑距离，时间越大，拓扑邻域越小</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        a = min(self.output)</span><br><span class="line">        return int(a-float(a)*t/self.iteration)</span><br><span class="line"></span><br><span class="line">    def Geteta(self, t, n):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :param t: 时间t, 这里用迭代次数来表示时间</span><br><span class="line">        :param n: 拓扑距离</span><br><span class="line">        :return: 返回学习率，</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        return np.power(np.e, -n)/(t+2)</span><br><span class="line"></span><br><span class="line">    def updata_W(self, X, t, winner):</span><br><span class="line">        N = self.GetN(t)</span><br><span class="line">        for x, i in enumerate(winner):</span><br><span class="line">            to_update = self.getneighbor(i, N)</span><br><span class="line">            for j in range(N+1):</span><br><span class="line">                e = self.Geteta(t, j)</span><br><span class="line">                for w in to_update[j]:</span><br><span class="line">                    self.W[:, w] = np.add(self.W[:,w], e*(X[x,:] - self.W[:,w]))</span><br><span class="line"></span><br><span class="line">    def getneighbor(self, index, N):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        :param index:获胜神经元的下标</span><br><span class="line">        :param N: 邻域半径</span><br><span class="line">        :return ans: 返回一个集合列表，分别是不同邻域半径内需要更新的神经元坐标</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        a, b = self.output</span><br><span class="line">        length = a*b</span><br><span class="line">        def distence(index1, index2):</span><br><span class="line">            i1_a, i1_b = index1 // a, index1 % b</span><br><span class="line">            i2_a, i2_b = index2 // a, index2 % b</span><br><span class="line">            return np.abs(i1_a - i2_a), np.abs(i1_b - i2_b)</span><br><span class="line"></span><br><span class="line">        ans = [set() for i in range(N+1)]</span><br><span class="line">        for i in range(length):</span><br><span class="line">            dist_a, dist_b = distence(i, index)</span><br><span class="line">            if dist_a &lt;= N and dist_b &lt;= N: ans[max(dist_a, dist_b)].add(i)</span><br><span class="line">        return ans</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    def train(self):</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        train_Y:训练样本与形状为batch_size*(n*m)</span><br><span class="line">        winner:一个一维向量，batch_size个获胜神经元的下标</span><br><span class="line">        :return:返回值是调整后的W</span><br><span class="line">        &quot;&quot;&quot;</span><br><span class="line">        count = 0</span><br><span class="line">        while self.iteration &gt; count:</span><br><span class="line">            train_X = self.X[np.random.choice(self.X.shape[0], self.batch_size)]</span><br><span class="line">            normal_W(self.W)</span><br><span class="line">            normal_X(train_X)</span><br><span class="line">            train_Y = train_X.dot(self.W)</span><br><span class="line">            winner = np.argmax(train_Y, axis=1).tolist()</span><br><span class="line">            self.updata_W(train_X, count, winner)</span><br><span class="line">            count += 1</span><br><span class="line">            # print(winner)</span><br><span class="line">        return self.W</span><br><span class="line"></span><br><span class="line">    def train_result(self):</span><br><span class="line">        normal_X(self.X)</span><br><span class="line">        train_Y = self.X.dot(self.W)</span><br><span class="line">        # winner = np.argmax(train_Y, axis=1).tolist()</span><br><span class="line">        winner = np.argmax(train_Y, axis=1)</span><br><span class="line">        # print (winner)</span><br><span class="line">        return winner</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def normal_X(X):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    :param X:二维矩阵，N*D，N个D维的数据</span><br><span class="line">    :return: 将X归一化的结果</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    N, D = X.shape</span><br><span class="line">    for i in range(N):</span><br><span class="line">        temp = np.sum(np.multiply(X[i], X[i]))</span><br><span class="line">        X[i] /= np.sqrt(temp)</span><br><span class="line">    return X</span><br><span class="line">def normal_W(W):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    :param W:二维矩阵，D*(n*m)，D个n*m维的数据</span><br><span class="line">    :return: 将W归一化的结果</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    for i in range(W.shape[1]):</span><br><span class="line">        temp = np.sum(np.multiply(W[:,i], W[:,i]))</span><br><span class="line">        W[:, i] /= np.sqrt(temp)</span><br><span class="line">    return W</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">data_car=io.loadmat(&apos;data2000.mat&apos;)</span><br><span class="line">data_car_data=data_car[&apos;data&apos;]</span><br><span class="line">data_car_data=np.array(data_car_data)</span><br><span class="line"></span><br><span class="line">size=(10,10)</span><br><span class="line">som = SOM(data_car_data, size, 200, 30)</span><br><span class="line">som.train()</span><br><span class="line">res = som.train_result()</span><br><span class="line"># print(res)</span><br><span class="line">#绘图</span><br><span class="line">data_drow=[]</span><br><span class="line">for i in range(len(res)):</span><br><span class="line">    data_x_y=res[i]</span><br><span class="line">    data_drow.append([math.floor(data_x_y/size[1]),data_x_y%size[1]])</span><br><span class="line">print(data_drow)</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">data_x=[]</span><br><span class="line">data_y=[]</span><br><span class="line">for i in range(len(data_drow)):</span><br><span class="line">    data_x.append(data_drow[i][0])</span><br><span class="line">    data_y.append(data_drow[i][1])</span><br><span class="line"># print(data_x)</span><br><span class="line"># print(data_y)</span><br><span class="line">plt.scatter(data_x, data_y,c=label)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>聚类效果如下图：</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/som%E7%AE%97%E6%B3%95/SOM%E8%81%9A%E7%B1%BB.jpg" alt=""></p>
+<p>当然也可以直接将数据传入SOM模型聚类。效果如下图：</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/som%E7%AE%97%E6%B3%95/SOM%E7%9B%B4%E6%8E%A5%E8%81%9A%E7%B1%BB.png" alt=""></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/25/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/" rel="prev" title="人脸识别">
+      <i class="fa fa-chevron-left"></i> 人脸识别
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-SOM简介"><span class="nav-number">1.</span> <span class="nav-text">1.SOM简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SOM结构"><span class="nav-number">1.1.</span> <span class="nav-text">2 .SOM结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-SOM学习过程"><span class="nav-number">2.</span> <span class="nav-text">3 .SOM学习过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-代码实现"><span class="nav-number">3.</span> <span class="nav-text">4 .代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-数据"><span class="nav-number">3.1.</span> <span class="nav-text">4.1 数据</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="杰神"
+      src="/images/%E8%B0%A6%E5%8D%91.gif">
+  <p class="site-author-name" itemprop="name">杰神</p>
+  <div class="site-description" itemprop="description">哈喽，欢迎光临</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">杰神</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">13k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">11 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: '0ziQzmOBNYoaeAR664jTpozI-gzGzoHsz',
+    appKey: 'SOk81iDElNqOkY1qrRFhHpzI',
+    placeholder: "留下邮箱,有回复时你将收到提醒，邮箱不会被公开",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>
