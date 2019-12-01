@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/jie.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/jie.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="wjwl" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="生成对抗网络（Generative Adversarial Network）由一个生成网络与一个判别网络组成。生成网络从潜在空间（latent space）中随机采样作为输入，其输出结果需要尽量模仿训练集中的真实样本。判别网络的输入则为真实样本或生成网络的输出，其目的是将生成网络的输出从真实样本中尽可能分辨出来。而生成网络则要尽可能地欺骗判别网络。两个网络相互对抗、不断调整参数，最终目的是使判别">
+<meta name="keywords" content="王杰">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GAN模型">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;01&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;index.html">
+<meta property="og:site_name" content="wjwl">
+<meta property="og:description" content="生成对抗网络（Generative Adversarial Network）由一个生成网络与一个判别网络组成。生成网络从潜在空间（latent space）中随机采样作为输入，其输出结果需要尽量模仿训练集中的真实样本。判别网络的输入则为真实样本或生成网络的输出，其目的是将生成网络的输出从真实样本中尽可能分辨出来。而生成网络则要尽可能地欺骗判别网络。两个网络相互对抗、不断调整参数，最终目的是使判别">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;gan1.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;GAN2.png">
+<meta property="og:updated_time" content="2019-12-01T08:03:24.115Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;gan1.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>GAN模型 | wjwl</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wjwl</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">博客</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-top">
+
+    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>TopX</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E8%B0%A6%E5%8D%91.gif">
+      <meta itemprop="name" content="杰神">
+      <meta itemprop="description" content="哈喽，欢迎光临">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wjwl">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GAN模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-01 15:25:58" itemprop="dateCreated datePublished" datetime="2019-12-01T15:25:58+08:00">2019-12-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 生成对抗网络（Generative Adversarial Network）由一个生成网络与一个判别网络组成。生成网络从潜在空间（latent space）中随机采样作为输入，其输出结果需要尽量模仿训练集中的真实样本。判别网络的输入则为真实样本或生成网络的输出，其目的是将生成网络的输出从真实样本中尽可能分辨出来。而生成网络则要尽可能地欺骗判别网络。两个网络相互对抗、不断调整参数，最终目的是使判别网络无法判断生成网络的输出结果是否真实。 ——<a href="https://zh.wikipedia.org/wiki/生成对抗网络" target="_blank" rel="noopener">维基百科</a> </p>
+<a id="more"></a>
+
+<h1 id="1-GAN-模型结构"><a href="#1-GAN-模型结构" class="headerlink" title="1. GAN 模型结构"></a>1. GAN 模型结构</h1><p> GAN基本结构包括两个网络结构——生成模型Generator和判别模型Discriminator。G网络尽可能生成满足正样本分布的假样本，而D网络则尽可能辨别出真假样本，在这个博弈过程中2种网络的性能都越来越好。GAN模型结构如下： </p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/GAN%E6%A8%A1%E5%9E%8B/gan1.png" alt=""></p>
+<h1 id="2-代码实现"><a href="#2-代码实现" class="headerlink" title="2. 代码实现"></a>2. 代码实现</h1><p>数据集：mnist数据集的0数字图片。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">#定义输入数据格式</span><br><span class="line">def get_inputs(real_size, noise_size):</span><br><span class="line">    real_img = tf.placeholder(tf.float32, [None, real_size], name=&quot;real_img&quot;)</span><br><span class="line">    noise_img = tf.placeholder(tf.float32, [None, noise_size], name=&quot;noise_img&quot;)</span><br><span class="line">    return real_img, noise_img</span><br><span class="line"></span><br><span class="line">#将一张随机像素的图片经过一个全连接层后经过一个Leaky ReLU处理，</span><br><span class="line">#之后为了避免过拟合dropout后再经过一个全连接层进行tanh激活后，生成一张“假图片”</span><br><span class="line">def get_generator(noise_img, n_units, out_dim, reuse=False, alpha=0.01):</span><br><span class="line">    with tf.variable_scope(&quot;generator&quot;, reuse=reuse):</span><br><span class="line">        hidden1 = tf.layers.dense(noise_img, n_units)  # 全连接层</span><br><span class="line">        hidden1 = tf.maximum(alpha * hidden1, hidden1)</span><br><span class="line">        hidden1 = tf.layers.dropout(hidden1, rate=0.2)</span><br><span class="line">        logits = tf.layers.dense(hidden1, out_dim)</span><br><span class="line">        outputs = tf.tanh(logits)</span><br><span class="line">        return logits, outputs</span><br><span class="line">#将待判定的图片经过全连接层--&gt;Leaky ReLU--&gt;全连接层--&gt;sigmoid激活函数处理后，得到0或1的结果。</span><br><span class="line">def get_discriminator(img, n_units, reuse=False, alpha=0.01):</span><br><span class="line">    with tf.variable_scope(&quot;discriminator&quot;, reuse=reuse):</span><br><span class="line">        hidden1 = tf.layers.dense(img, n_units)</span><br><span class="line">        hidden1 = tf.maximum(alpha * hidden1, hidden1)</span><br><span class="line">        logits = tf.layers.dense(hidden1, 1)</span><br><span class="line">        outputs = tf.sigmoid(logits)</span><br><span class="line">        return logits, outputs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#在实现时，我们可以首先把MNIST数据中的标签为0的图像提取出来，存到列表中，总共取了5000张图片。</span><br><span class="line">from tensorflow.examples.tutorials.mnist import input_data</span><br><span class="line">mnist = input_data.read_data_sets(&quot;mnist/&quot;, one_hot=True) #自己建一个文件夹mnist</span><br><span class="line">samples=[]</span><br><span class="line">i = j = 0</span><br><span class="line">while i&lt;5000:</span><br><span class="line">    if np.argmax(mnist.train.labels[j])== 0:</span><br><span class="line">        samples.append(mnist.train.images[j])</span><br><span class="line">        i += 1</span><br><span class="line">    j += 1</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line">img_size:输入数据大小</span><br><span class="line">noise_size:生成器输入数据大小</span><br><span class="line">g_units d_units 超参数</span><br><span class="line">learning_rate 学习率</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line">img_size = 784</span><br><span class="line">noise_size = 100</span><br><span class="line">g_units = 128</span><br><span class="line">d_units = 128</span><br><span class="line">alpha = 0.01</span><br><span class="line">learning_rate = 0.001</span><br><span class="line">smooth = 0.1</span><br><span class="line"></span><br><span class="line">tf.reset_default_graph() #清除默认图形堆栈并重置全局默认图形。</span><br><span class="line">real_img, noise_img = get_inputs(img_size, noise_size)</span><br><span class="line">g_logits, g_outputs = get_generator(noise_img, g_units, img_size)</span><br><span class="line"></span><br><span class="line">d_logits_real, d_outputs_real = get_discriminator(real_img, d_units)</span><br><span class="line">d_logits_fake, d_outputs_fake = get_discriminator(g_outputs, d_units, reuse=True)</span><br><span class="line"></span><br><span class="line">d_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(</span><br><span class="line">    logits=d_logits_real, labels=tf.ones_like(d_logits_real)</span><br><span class="line">) * (1 - smooth))</span><br><span class="line">d_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(</span><br><span class="line">    logits=d_logits_fake, labels=tf.zeros_like(d_logits_fake)</span><br><span class="line">))</span><br><span class="line">d_loss = tf.add(d_loss_real, d_loss_fake)</span><br><span class="line">g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(</span><br><span class="line">    logits=d_logits_fake, labels=tf.ones_like(d_logits_fake)</span><br><span class="line">) * (1 - smooth))</span><br><span class="line"></span><br><span class="line">train_vars = tf.trainable_variables()</span><br><span class="line">g_vars = [var for var in train_vars if var.name.startswith(&quot;generator&quot;)]</span><br><span class="line">d_vars = [var for var in train_vars if var.name.startswith(&quot;discriminator&quot;)]</span><br><span class="line"></span><br><span class="line">d_train_opt = tf.train.AdamOptimizer(learning_rate).minimize(d_loss, var_list=d_vars)</span><br><span class="line">g_train_opt = tf.train.AdamOptimizer(learning_rate).minimize(g_loss, var_list=g_vars)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">epochs = 5000</span><br><span class="line">n_sample = 10</span><br><span class="line">losses = []</span><br><span class="line"></span><br><span class="line">print(len(samples))</span><br><span class="line">size = samples[0].size</span><br><span class="line"></span><br><span class="line">with tf.Session() as sess:</span><br><span class="line">    tf.global_variables_initializer().run()</span><br><span class="line">    for e in range(epochs):</span><br><span class="line">        batch_images = samples[e] * 2 -1</span><br><span class="line">        batch_noise = np.random.uniform(-1, 1, size=noise_size)</span><br><span class="line"></span><br><span class="line">        _ = sess.run(d_train_opt, feed_dict=&#123;real_img:[batch_images], noise_img:[batch_noise]&#125;)</span><br><span class="line">        _ = sess.run(g_train_opt, feed_dict=&#123;noise_img:[batch_noise]&#125;)</span><br><span class="line"></span><br><span class="line">    sample_noise = np.random.uniform(-1, 1, size=noise_size)</span><br><span class="line">    g_logit, g_output = sess.run(get_generator(noise_img, g_units, img_size,</span><br><span class="line">                                         reuse=True), feed_dict=&#123;</span><br><span class="line">        noise_img:[sample_noise]</span><br><span class="line">    &#125;)</span><br><span class="line">    print(g_logit.size)</span><br><span class="line">    g_output = (g_output+1)/2</span><br><span class="line">    plt.imshow(g_output.reshape([28, 28]), cmap=&apos;Greys_r&apos;)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<p>训练5000次后生成图片的结果：</p>
+<p><img src="https://blog-1300775928.cos.ap-chengdu.myqcloud.com/GAN%E6%A8%A1%E5%9E%8B/GAN2.png" alt=""></p>
+<p> 可以看出，在经过了5000次的迭代后，g网络生成的图片已经可以大致呈现出一个0的形状。 </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/30/vae/" rel="prev" title="VAE模型">
+      <i class="fa fa-chevron-left"></i> VAE模型
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-GAN-模型结构"><span class="nav-number">1.</span> <span class="nav-text">1. GAN 模型结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-代码实现"><span class="nav-number">2.</span> <span class="nav-text">2. 代码实现</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="杰神"
+      src="/images/%E8%B0%A6%E5%8D%91.gif">
+  <p class="site-author-name" itemprop="name">杰神</p>
+  <div class="site-description" itemprop="description">哈喽，欢迎光临</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">杰神</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">20k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">18 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: '0ziQzmOBNYoaeAR664jTpozI-gzGzoHsz',
+    appKey: 'SOk81iDElNqOkY1qrRFhHpzI',
+    placeholder: "留下邮箱,有回复时你将收到提醒，邮箱不会被公开",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>
