@@ -48,7 +48,7 @@
 </script>
 
   <meta name="description" content="生成对抗网络（Generative Adversarial Network）由一个生成网络与一个判别网络组成。生成网络从潜在空间（latent space）中随机采样作为输入，其输出结果需要尽量模仿训练集中的真实样本。判别网络的输入则为真实样本或生成网络的输出，其目的是将生成网络的输出从真实样本中尽可能分辨出来。而生成网络则要尽可能地欺骗判别网络。两个网络相互对抗、不断调整参数，最终目的是使判别">
-<meta name="keywords" content="王杰">
+<meta name="keywords" content="tensorflow">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GAN模型">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;01&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;index.html">
@@ -57,7 +57,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;gan1.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;GAN2.png">
-<meta property="og:updated_time" content="2019-12-01T08:03:24.115Z">
+<meta property="og:updated_time" content="2019-12-01T13:11:26.191Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;blog-1300775928.cos.ap-chengdu.myqcloud.com&#x2F;GAN%E6%A8%A1%E5%9E%8B&#x2F;gan1.png">
 
@@ -127,7 +127,7 @@
   </div>
 
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
+    <div class="toggle" aria-label="Navigationsleiste an/ausschalten">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -141,21 +141,36 @@
   <ul id="menu" class="menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Startseite</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>Über</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Schlagwörter</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Kategorien</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archiv</a>
 
   </li>
         <li class="menu-item menu-item-top">
 
-    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>TopX</a>
+    <a href="/top/" rel="section"><i class="fa fa-fw fa-signal"></i>top</a>
 
   </li>
       <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Suche
         </a>
       </li>
   </ul>
@@ -169,7 +184,7 @@
   </span>
   <div class="search-input-container">
     <input autocomplete="off" autocorrect="off" autocapitalize="none"
-           placeholder="搜索..." spellcheck="false"
+           placeholder="Suche..." spellcheck="false"
            type="text" id="search-input">
   </div>
   <span class="popup-btn-close">
@@ -227,15 +242,15 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">发表于</span>
+              <span class="post-meta-item-text">Veröffentlicht am</span>
 
-              <time title="创建时间：2019-12-01 15:25:58" itemprop="dateCreated datePublished" datetime="2019-12-01T15:25:58+08:00">2019-12-01</time>
+              <time title="Erstellt: 2019-12-01 15:25:58" itemprop="dateCreated datePublished" datetime="2019-12-01T15:25:58+08:00">2019-12-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
-              <span class="post-meta-item-text">分类于</span>
+              <span class="post-meta-item-text">in</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
                     <span itemprop="name">深度学习</span>
@@ -250,7 +265,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-comment-o"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
+      <span class="post-meta-item-text">Valine: </span>
     
     <a title="valine" href="/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/#comments" itemprop="discussionUrl">
       <span class="post-comments-count valine-comment-count" data-xid="/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/" itemprop="commentCount"></span>
@@ -258,19 +273,19 @@
   </span>
   
   
-            <span class="post-meta-item" title="本文字数">
+            <span class="post-meta-item" title="Symbole im Artikel gezählt">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
               </span>
-                <span class="post-meta-item-text">本文字数：</span>
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
               <span>3.9k</span>
             </span>
-            <span class="post-meta-item" title="阅读时长">
+            <span class="post-meta-item" title="Lesezeit">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              <span>4 minuten.</span>
             </span>
 
         </div>
@@ -301,6 +316,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tensorflow/" rel="tag"># tensorflow</a>
+          </div>
 
         
 
@@ -341,10 +359,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          文章目录
+          Inhaltsverzeichnis
         </li>
         <li class="sidebar-nav-overview">
-          站点概览
+          Übersicht
         </li>
       </ul>
 
@@ -367,12 +385,20 @@
           <a href="/archives/">
         
           <span class="site-state-item-count">6</span>
-          <span class="site-state-item-name">日志</span>
+          <span class="site-state-item-name">Artikel</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
         <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">分类</span>
+        <span class="site-state-item-name">Kategorien</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">schlagwörter</span></a>
       </div>
   </nav>
 </div>
@@ -410,12 +436,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">20k</span>
+    <span title="Insgesamt gezählte Symbole">20k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">18 分钟</span>
+    <span title="Insgesamte Lesezeit">18 minuten.</span>
 </div>
 
         

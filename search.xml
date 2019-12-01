@@ -18,6 +18,9 @@
       <categories>
         <category>深度学习</category>
       </categories>
+      <tags>
+        <tag>tensorflow</tag>
+      </tags>
   </entry>
   <entry>
     <title>VAE模型</title>
@@ -36,6 +39,9 @@
       <categories>
         <category>深度学习</category>
       </categories>
+      <tags>
+        <tag>tensorflow</tag>
+      </tags>
   </entry>
   <entry>
     <title>som算法</title>
@@ -77,6 +83,9 @@
       <categories>
         <category>深度学习</category>
       </categories>
+      <tags>
+        <tag>tensorflow</tag>
+      </tags>
   </entry>
   <entry>
     <title>人脸识别</title>
@@ -126,6 +135,9 @@
       <categories>
         <category>深度学习</category>
       </categories>
+      <tags>
+        <tag>python3</tag>
+      </tags>
   </entry>
   <entry>
     <title>java环境配置</title>
@@ -164,6 +176,9 @@
       <categories>
         <category>java</category>
       </categories>
+      <tags>
+        <tag>java</tag>
+      </tags>
   </entry>
   <entry>
     <title>Hello World</title>
