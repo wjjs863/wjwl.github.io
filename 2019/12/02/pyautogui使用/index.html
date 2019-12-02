@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/jie.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/jie.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="wjwl" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="PyAutoGUI是一个纯Python的GUI自动化工具,其目的是可以用程序自动控制鼠标和键盘操作多平台支持（Windows，OS X，Linux）。">
+<meta name="keywords" content="python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pyautogui使用">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;02&#x2F;pyautogui%E4%BD%BF%E7%94%A8&#x2F;index.html">
+<meta property="og:site_name" content="wjwl">
+<meta property="og:description" content="PyAutoGUI是一个纯Python的GUI自动化工具,其目的是可以用程序自动控制鼠标和键盘操作多平台支持（Windows，OS X，Linux）。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-02T03:17:42.687Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/02/pyautogui%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>pyautogui使用 | wjwl</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wjwl</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">博客</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/02/pyautogui%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E8%B0%A6%E5%8D%91.gif">
+      <meta itemprop="name" content="杰神">
+      <meta itemprop="description" content="哈喽，欢迎光临">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wjwl">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pyautogui使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-02 11:03:26" itemprop="dateCreated datePublished" datetime="2019-12-02T11:03:26+08:00">2019-12-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/12/02/pyautogui%E4%BD%BF%E7%94%A8/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/12/02/pyautogui%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>PyAutoGUI是一个纯Python的GUI自动化工具,其目的是可以用程序自动控制鼠标和键盘<br>操作多平台支持（Windows，OS X，Linux）。</p>
+<a id="more"></a>
+
+<h1 id="1-pyautogui安装"><a href="#1-pyautogui安装" class="headerlink" title="1.pyautogui安装"></a>1.pyautogui安装</h1><p>可以用pip inatall pyautogui安装</p>
+<h1 id="2-pyautogui使用"><a href="#2-pyautogui使用" class="headerlink" title="2.pyautogui使用"></a>2.pyautogui使用</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">import pyautogui</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;获取当前屏幕分辨率&apos;&apos;&apos;</span><br><span class="line"># screenWidth, screenHeight = pyautogui.size()</span><br><span class="line"># print(screenHeight,screenWidth)</span><br><span class="line">&apos;&apos;&apos;获取当前鼠标位置&apos;&apos;&apos;</span><br><span class="line"># currentMouseX, currentMouseY = pyautogui.position()</span><br><span class="line"># print(currentMouseX,currentMouseY)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;2秒钟鼠标移动坐标为100,100位置  绝对移动&apos;&apos;&apos;</span><br><span class="line"># pyautogui.moveTo(100, 100,2)</span><br><span class="line"># pyautogui.moveTo(x=100, y=100,duration=2, tween=pyautogui.linear)</span><br><span class="line">&apos;&apos;&apos;鼠标相对移动 ,</span><br><span class="line">xOffset:值为正向右移动。值为负向左移动。</span><br><span class="line">yOffset：值为正向下移动；值为负向上移动</span><br><span class="line">pyautogui.moveRel(None, 10)</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line"># pyautogui.moveRel(xOffset=100, yOffset=100,duration=0.0, tween=pyautogui.linear)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;用缓动/渐变函数让鼠标2秒后移动到(500,500)位置&apos;&apos;&apos;</span><br><span class="line"># #  use tweening/easing function to move mouse over 2 seconds.</span><br><span class="line"># pyautogui.moveTo(x=500, y=500, duration=2, tween=pyautogui.easeInOutQuad)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line">鼠标左击一次</span><br><span class="line">pyautogui.click()</span><br><span class="line">x</span><br><span class="line">y</span><br><span class="line">clicks 点击次数</span><br><span class="line">interval点击之间的间隔</span><br><span class="line">button &apos;left&apos;, &apos;middle&apos;, &apos;right&apos; 对应鼠标 左 中 右或者取值(1, 2, or 3)</span><br><span class="line">tween 渐变函数</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line"># pyautogui.click(x=None, y=None, clicks=1, interval=0.0, button=&apos;left&apos;, duration=0.0, tween=pyautogui.linear)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;鼠标当前位置0间隔双击&apos;&apos;&apos;</span><br><span class="line"># #pyautogui.doubleClick()</span><br><span class="line"># pyautogui.doubleClick(x=None, y=None, interval=0.0, button=&apos;left&apos;, duration=0.0, tween=pyautogui.linear)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;鼠标当前位置3击&apos;&apos;&apos;</span><br><span class="line"># #pyautogui.tripleClick()</span><br><span class="line"># pyautogui.tripleClick(x=None, y=None, interval=0.0, button=&apos;left&apos;, duration=0.0, tween=pyautogui.linear)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;鼠标右击&apos;&apos;&apos;</span><br><span class="line"># pyautogui.rightClick()</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;鼠标中击&apos;&apos;&apos;</span><br><span class="line"># pyautogui.middleClick()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;鼠标拖拽操作&apos;&apos;&apos;</span><br><span class="line"># #鼠标拖拽</span><br><span class="line"># pyautogui.dragTo(x=427, y=535, duration=3,button=&apos;left&apos;)</span><br><span class="line"># #鼠标相对拖拽</span><br><span class="line"># pyautogui.dragRel(xOffset=100,yOffset=100,duration=3,button=&apos;left&apos;,mouseDownUp=False)</span><br><span class="line"># #鼠标移动到x=1796, y=778位置按下</span><br><span class="line"># pyautogui.mouseDown(x=1796, y=778, button=&apos;left&apos;)</span><br><span class="line"># #鼠标移动到x=2745, y=778位置松开（与mouseDown组合使用选中）</span><br><span class="line"># pyautogui.mouseUp(x=2745, y=778, button=&apos;left&apos;,duration=5)</span><br><span class="line"># #鼠标当前位置滚轮滚动</span><br><span class="line"># pyautogui.scroll()</span><br><span class="line"># #鼠标水平滚动（Linux）</span><br><span class="line"># pyautogui.hscroll()</span><br><span class="line"># #鼠标左右滚动（Linux）</span><br><span class="line"># pyautogui.vscroll()</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;键盘操作&apos;&apos;&apos;</span><br><span class="line"># #模拟输入信息</span><br><span class="line"># pyautogui.typewrite(message=&apos;Hello world!&apos;,interval=0.5)</span><br><span class="line"># #点击ESC</span><br><span class="line"># pyautogui.press(&apos;esc&apos;)</span><br><span class="line"># # 按住shift键</span><br><span class="line"># pyautogui.keyDown(&apos;shift&apos;)</span><br><span class="line"># # 放开shift键</span><br><span class="line"># pyautogui.keyUp(&apos;shift&apos;)</span><br><span class="line"># # 模拟组合热键</span><br><span class="line"># pyautogui.hotkey(&apos;ctrl&apos;, &apos;c&apos;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;截屏并保存&apos;&apos;&apos;</span><br><span class="line"># im1 = pyautogui.screenshot()</span><br><span class="line"># im1.save(&apos;my_screenshot.png&apos;)</span><br><span class="line">#</span><br><span class="line"># im2 = pyautogui.screenshot(&apos;my_screenshot2.png&apos;)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;屏幕查找图片位置并获取中间点&apos;&apos;&apos;</span><br><span class="line"># #在当前屏幕中查找指定图片(图片需要由系统截图功能截取的图)</span><br><span class="line"># coords = pyautogui.locateOnScreen(&apos;folder.png&apos;)</span><br><span class="line"># #获取定位到的图中间点坐标</span><br><span class="line"># x,y=pyautogui.center(coords)</span><br><span class="line"># #右击该坐标点</span><br><span class="line"># pyautogui.rightClick(x,y)</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;安全措施&apos;&apos;&apos;</span><br><span class="line"># #保护措施，避免失控</span><br><span class="line"># pyautogui.FAILSAFE = True</span><br><span class="line"># #为所有的PyAutoGUI函数增加延迟。默认延迟时间是0.1秒。</span><br><span class="line"># pyautogui.PAUSE = 0.5</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/01/GAN%E6%A8%A1%E5%9E%8B/" rel="prev" title="GAN模型">
+      <i class="fa fa-chevron-left"></i> GAN模型
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="comments"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-pyautogui安装"><span class="nav-number">1.</span> <span class="nav-text">1.pyautogui安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-pyautogui使用"><span class="nav-number">2.</span> <span class="nav-text">2.pyautogui使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="杰神"
+      src="/images/%E8%B0%A6%E5%8D%91.gif">
+  <p class="site-author-name" itemprop="name">杰神</p>
+  <div class="site-description" itemprop="description">哈喽，欢迎光临</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">杰神</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">23k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">21 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: '0ziQzmOBNYoaeAR664jTpozI-gzGzoHsz',
+    appKey: 'SOk81iDElNqOkY1qrRFhHpzI',
+    placeholder: "留下邮箱,有回复时你将收到提醒，邮箱不会被公开",
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>
